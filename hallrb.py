@@ -1,36 +1,38 @@
-import RPIO
+# -*- coding: utf-8 -*-
+import RPi.GPIO as GPIO
+import time
 
-pinHallin = 4 # pino do sensor Hall entrada (número GPIO)
-pinHallout = 5 # pino do sensor Hall saída
-inputValuein = 0 # valor lido
-inputValueout = 0;
+#pinHallin = 7 # pino do sensor Hall entrada (número GPIO)
+#pinHallout =  # pino do sensor Hall saída
+inputValuein = 1 # valor lido
+inputValueout = 1
 i = 0; # contador entrada
 o = 0; # contador saída
 t = 0; # contador total 
 
-RPIO.setup(pinHallin, RPIO.IN, pull_up_down=RPIO.PUD_UP)
-RPIO.setup(pinHallout, RPIO.IN, pull_up_down=RPIO.PUD_UP)
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(7, GPIO.IN)
+GPIO.setup(29, GPIO.IN)
 
-while (True):
-  # enquanto o sensor não passar continuar
-  # lendo a entrada, depois que ele entra
-  # inputValue vai para 0 e ele sai do laço
-  while(inputValuein | inputValueout):
-	inputValuein = RPIO.input(pinHallin)
-	inputValueout = RPIO.input(pinHallout)
-  
-  if (inputValuein):
-    i = i + 1
-    print("Contagem de Entrada:")
-    print(i)
-  
-  if (inputValueout):
-    o = o + 1
-    print("Contagem de Saída:")
-    print(o)
-  
-  t = i - o
-  print(t)
-  
-  inputValuein = True
-  inputValueout = True
+while (1):
+    while (inputValuein and inputValueout) == 1:
+        inputValuein = GPIO.input(7)
+        inputValueout = GPIO.input(29)
+        #print("Contagem de Entrada:")
+
+    if inputValuein == 0:
+        i = i + 1
+        print("Contagem de Entrada:")
+        print(i)
+        time.sleep(0.3)
+
+    if inputValueout == 0:
+        o = o + 1
+        print("Contagem de Saida:")
+        print(o)
+        time.sleep(0.3)
+        
+    t = i - o
+    print(t)
+    inputValuein = 1
+    inputValueout = 1
